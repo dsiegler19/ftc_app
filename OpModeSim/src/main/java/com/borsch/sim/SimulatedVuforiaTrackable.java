@@ -1,14 +1,12 @@
 package com.borsch.sim;
 
+import com.vuforia.Matrix34F;
+import com.vuforia.SimulatedTrackableResult;
 import com.vuforia.TrackableResult;
 import com.vuforia.VuMarkTarget;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.navigation.VuMarkInstanceId;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+import org.firstinspires.ftc.robotcore.external.navigation.*;
 import org.firstinspires.ftc.robotcore.internal.vuforia.VuforiaTrackableContainer;
-import org.firstinspires.ftc.robotcore.internal.vuforia.VuforiaTrackableImpl;
 import org.firstinspires.ftc.robotcore.internal.vuforia.VuforiaTrackableNotify;
 import org.firstinspires.ftc.robotcore.internal.vuforia.VuforiaTrackablesImpl;
 
@@ -22,7 +20,7 @@ import java.util.Map;
 public class SimulatedVuforiaTrackable implements VuforiaTrackable, VuforiaTrackableNotify, VuforiaTrackableContainer {
 
     protected VuforiaTrackable parent;
-    protected VuforiaTrackablesImpl trackables;
+    protected VuforiaTrackables trackables;
     protected String name;
     protected Listener listener;
     protected Object userData;
@@ -31,16 +29,24 @@ public class SimulatedVuforiaTrackable implements VuforiaTrackable, VuforiaTrack
     protected Class<? extends Listener> listenerClass;
     protected final Map<VuMarkInstanceId, VuforiaTrackable> vuMarkMap;
 
+    public Matrix34F pose;
+    public int status;
 
-    public SimulatedVuforiaTrackable(VuforiaTrackable parent, VuforiaTrackablesImpl trackables, Class<? extends Listener> listenerClass) {
+    public SimulatedVuforiaTrackable() {
+        this(new Matrix34F(), TrackableResult.STATUS.UNKNOWN);
+    }
+
+    public SimulatedVuforiaTrackable(Matrix34F pose, int status) {
         this.locationLock = new Object();
         this.vuMarkMap = new HashMap();
-        this.parent = parent;
-        this.trackables = trackables;
+        this.parent = null;
+        this.trackables = null;
         this.userData = null;
         this.location = null;
         this.name = null;
-        this.listenerClass = listenerClass;
+        this.listenerClass = SimulatedVuforiaTrackableDefaultListener.class;
+        this.pose = pose;
+        this.status = status;
 
         try {
             Constructor ctor = listenerClass.getConstructor(VuforiaTrackable.class);
@@ -60,10 +66,6 @@ public class SimulatedVuforiaTrackable implements VuforiaTrackable, VuforiaTrack
         synchronized(this.vuMarkMap) {
             VuMarkInstanceId instanceId = new VuMarkInstanceId(vuMarkTarget.getInstanceId());
             VuforiaTrackable result = (VuforiaTrackable)this.vuMarkMap.get(instanceId);
-            if (null == result) {
-                result = new VuforiaTrackableImpl(this, this.trackables, vuMarkTarget, this.listenerClass);
-                this.vuMarkMap.put(instanceId, result);
-            }
 
             return (VuforiaTrackable)result;
         }
@@ -122,11 +124,16 @@ public class SimulatedVuforiaTrackable implements VuforiaTrackable, VuforiaTrack
         return this.parent;
     }
 
+    @Override
+    public void noteTracked(TrackableResult trackableResult) {
+
+    }
+
     public synchronized void noteNotTracked() {
         this.getListener().onNotTracked();
     }
 
-    public synchronized void noteTracked(TrackableResult trackableResult) {
+    public synchronized void noteTracked(SimulatedTrackableResult trackableResult) {
         this.getListener().onTracked(trackableResult, (VuforiaTrackable)null);
         if (this.parent instanceof VuforiaTrackableNotify) {
             this.parent.getListener().onTracked(trackableResult, this);

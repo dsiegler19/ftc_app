@@ -2,6 +2,7 @@ package org.firstinspires.ftc.robotcore.internal.vuforia;
 
 import com.borsch.sim.SimulatedVuforiaLocalizer;
 import com.borsch.sim.SimulatedVuforiaTrackable;
+import com.vuforia.SimulatedTrackableResult;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
@@ -41,7 +42,9 @@ public class SimulatedVuforiaTrackables extends AbstractList<VuforiaTrackable> i
 
     @Override
     public void activate() {
-
+        for (SimulatedVuforiaTrackable trackable : this.trackables) {
+            trackable.getListener().onTracked(new SimulatedTrackableResult(trackable.pose, trackable.status), trackable);
+        }
     }
 
     @Override

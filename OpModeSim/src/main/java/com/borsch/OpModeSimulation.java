@@ -101,6 +101,13 @@ public class OpModeSimulation {
     }
 
     /**
+     * Simulates start() event call on the OpMode.
+     */
+    public void loop () {
+        opMode.loop();
+    }
+
+    /**
      * Simulates stop() event call on the OpMode.
      */
     public void stop () {

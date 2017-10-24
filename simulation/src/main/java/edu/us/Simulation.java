@@ -27,11 +27,15 @@ public class Simulation {
         robot.addDeviceInterfaceModule("dim");
 
         VuforiaConfiguration vuforiaConfig = new VuforiaConfiguration();
-        vuforiaConfig.addAsset("FTC2017-18", new SimulatedVuforiaTrackable(null, null, null));
+        SimulatedVuforiaTrackable leftPicture = new SimulatedVuforiaTrackable();
+        SimulatedVuforiaTrackable rightPicture = new SimulatedVuforiaTrackable();
+        SimulatedVuforiaTrackable centerPicture = new SimulatedVuforiaTrackable();
+        vuforiaConfig.addAssets("FTC2017-18", leftPicture, rightPicture, centerPicture);
 
-        OpModeSimulation sim = new OpModeSimulation("edu.usrobotics.opmode.mecanumbot.MecanumBotAutoBlue", robot);
-        sim.init ();
-        sim.start ();
+        OpModeSimulation sim = new OpModeSimulation("edu.usrobotics.opmode.compbot.autosimple.CompbotBlueSimple", robot, vuforiaConfig);
+        sim.init();
+        sim.start();
+        sim.loop();
 
         System.out.println("Simulation ended.");
         System.exit(0);

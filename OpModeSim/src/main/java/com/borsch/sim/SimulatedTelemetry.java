@@ -1,7 +1,6 @@
 package com.borsch.sim;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.opmode.TelemetryInternal;
@@ -23,6 +22,7 @@ public class SimulatedTelemetry implements Telemetry, TelemetryInternal {
 
     @Override
     public Item addData(String s, Object o) {
+        System.out.println("[Telemetry] " + s + ": " + o.toString());
         return null;
     }
 
