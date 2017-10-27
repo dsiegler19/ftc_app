@@ -3,19 +3,16 @@ package edu.usrobotics.opmode.compbot.justshoot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import edu.usrobotics.opmode.RobotOp;
 import edu.usrobotics.opmode.Route;
+import edu.usrobotics.opmode.StateBasedOp;
 import edu.usrobotics.opmode.compbot.CompbotHardware;
-import edu.usrobotics.opmode.task.ConcurrentTaskSet;
-import edu.usrobotics.opmode.task.Goal;
-import edu.usrobotics.opmode.task.MotorTask;
 import edu.usrobotics.opmode.task.Task;
 import edu.usrobotics.opmode.task.TaskType;
 
 /**
  * Created by mborsch19 & dsiegler19 on 10/13/16.
  */
-public abstract class CompbotAutoJustShoot extends RobotOp {
+public abstract class CompbotAutoJustShoot extends StateBasedOp {
 
     CompbotHardware robot = new CompbotHardware();
     private final boolean isBlueTeam;

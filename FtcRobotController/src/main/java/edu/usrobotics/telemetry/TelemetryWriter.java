@@ -1,8 +1,5 @@
 package edu.usrobotics.telemetry;
 
-import com.borsch.TelemetryCodec;
-import com.borsch.TelemetryData;
-
 /**
  * Created by Max on 9/9/2016.
  */
@@ -29,9 +26,9 @@ public class TelemetryWriter {
         return (int) (System.currentTimeMillis() - startTime);
     }
 
-    public static boolean writeData(TelemetryData data) {
-        return writeLine(TelemetryCodec.Encode(data));
-    }
+    //public static boolean writeData(TelemetryData data) {
+    //    return writeLine(TelemetryCodec.Encode(data));
+    //}
 
     public static boolean writeLine(String line) {
         if (writers.length < 1) { return false; }

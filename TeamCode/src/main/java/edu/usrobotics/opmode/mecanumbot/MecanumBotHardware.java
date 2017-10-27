@@ -41,7 +41,7 @@ public class MecanumBotHardware extends BaseHardware {
 
     public float wheelDiameter = 4.0f;
     public float wheelRadius = wheelDiameter / 2f;
-    public float wheelCircumference = 2f * (float)(Math.PI) * wheelRadius;
+    public float wheelCircumference = 2f * (float) (Math.PI) * wheelRadius;
 
     public enum MovementDirection {
         NORTH,
@@ -65,6 +65,8 @@ public class MecanumBotHardware extends BaseHardware {
         backLeft = hardwareMap.dcMotor.get ("bl");
 
         blockLift = hardwareMap.dcMotor.get("gripperlift");
+        blockLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        blockLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         blockLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         gripperLeft = hardwareMap.servo.get("gl");
@@ -75,10 +77,10 @@ public class MecanumBotHardware extends BaseHardware {
         colorSensor = hardwareMap.colorSensor.get("cs");
 
         topLimitSwitch = hardwareMap.get(DigitalChannel.class, "tls");
-        // bottomLimitSwitch = hardwareMap.get(DigitalChannel.class, "bls");
+        bottomLimitSwitch = hardwareMap.get(DigitalChannel.class, "bls");
 
         topLimitSwitch.setMode(DigitalChannel.Mode.INPUT);
-        // bottomLimitSwitch.setMode(DigitalChannel.Mode.INPUT);
+        bottomLimitSwitch.setMode(DigitalChannel.Mode.INPUT);
 
         bringUpBallKnocker();
 

@@ -3,9 +3,8 @@ package edu.usrobotics.opmode.compbot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import edu.usrobotics.opmode.LoggedOp;
-import edu.usrobotics.opmode.RobotOp;
 import edu.usrobotics.opmode.Route;
+import edu.usrobotics.opmode.StateBasedOp;
 import edu.usrobotics.opmode.task.ConcurrentTaskSet;
 import edu.usrobotics.opmode.task.Goal;
 import edu.usrobotics.opmode.task.MotorTask;
@@ -15,7 +14,7 @@ import edu.usrobotics.opmode.task.TaskType;
 /**
  * Created by mborsch19 & dsiegler19 on 10/13/16.
  */
-public abstract class CompbotAuto extends RobotOp {
+public abstract class CompbotAuto extends StateBasedOp {
 
     CompbotHardware robot = new CompbotHardware();
     private final boolean isBlueTeam;
@@ -356,7 +355,7 @@ public abstract class CompbotAuto extends RobotOp {
 
             @Override
             public boolean onExecuted() {
-                LoggedOp.debugOut=((System.currentTimeMillis() - start) + "");
+                //LoggedOp.debugOut=((System.currentTimeMillis() - start) + "");
                 if(System.currentTimeMillis() - start >= 1000){
 
                     return isTaskCompleted (0) || isTaskCompleted(1) || robot.sensingWhite(robot.bottomRightColorSensor) || robot.sensingWhite(robot.bottomLeftColorSensor);
@@ -483,7 +482,7 @@ public abstract class CompbotAuto extends RobotOp {
 
                     if(!onSecondBeacon){
 
-                        LoggedOp.debugOut = "not on 2nd beacon and correct color";
+                        //LoggedOp.debugOut = "not on 2nd beacon and correct color";
 
                         happyTrail.clearTasks();
                         encoderGoal8 = new Goal<> (robot.inchesToEncoderTicks(buttonPressingDistance * 2f));

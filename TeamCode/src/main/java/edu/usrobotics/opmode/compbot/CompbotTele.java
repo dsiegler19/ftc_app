@@ -3,15 +3,14 @@ package edu.usrobotics.opmode.compbot;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import edu.usrobotics.opmode.RobotOp;
+import edu.usrobotics.opmode.StateBasedOp;
 
 /**
  * Created by dsiegler19 on 10/13/16.
  */
 @TeleOp(name="Compbot TeleOp", group="Compbot")
-public class CompbotTele extends RobotOp {
+public class CompbotTele extends StateBasedOp {
 
     CompbotHardware robot = new CompbotHardware();
 
