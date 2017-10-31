@@ -3,6 +3,11 @@ package edu.usrobotics.opmode.mecanumbot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
@@ -18,33 +23,13 @@ public abstract class MecanumAuto extends LinearOpMode {
     private boolean isBlue;
 
     private VuforiaLocalizer vuforia;
-    private VuforiaTrackables cryptogramPictures;
+    private VuforiaTrackable relicTemplate;
 
-    private VuforiaTrackable leftPicture;
-    private VuforiaTrackable rightPicture;
-    private VuforiaTrackable centerPicture;
-
-    private int[] numTimesPicsSeen = {0, 0, 0};
+    private int[] numTimesPicsSeen = {0, 0, 0}; // Left, right, center
 
     public MecanumAuto(boolean color){
 
         isBlue = color;
-
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(com.qualcomm.ftcrobotcontroller.R.id.cameraMonitorViewId);
-        parameters.vuforiaLicenseKey = "Ab+0cBX/////AAAAGdHqAMTnx0GLk99ODKi2npU8fZTSoYRz3NVvSFAK0EFk6cVF8RTzBiLbhxPYq7ux9X+ATW+W0EXwTqTJYv7a2DyHhScsxg9fzafjr2Ddgdu75ltwpjE/EtNQWfKrSIQJIAespD3AiYczKRK/nQ9txHF9nE9DYht++su01GmV4Hr1KWSwF5H+ZeCTz3Au8NiSGUEPWv6zGmocyTjg00+TcRzAJdf9AFrrZFe1OeiY59egxotwJi7gnYUSfrqL/Mvc79BdDxUENl8FttSNkGxgjtiwjdZBIao7DjYnI21xvIvde98e2i26BOQAuQbn/4eov3Y6G4or0nJUDUIjAzcA0Y6whdiE5qwfd5wdzy9Bkq3J";
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
-        vuforia = ClassFactory.createVuforiaLocalizer(parameters);
-
-        cryptogramPictures = vuforia.loadTrackablesFromAsset("FTC2017-18");
-
-        leftPicture = cryptogramPictures.get(0);
-        leftPicture.setName("leftPicture");
-
-        rightPicture  = cryptogramPictures.get(1);
-        rightPicture.setName("rightPicture");
-
-        centerPicture  = cryptogramPictures.get(2);
-        centerPicture.setName("centerPicture");
 
     }
 
@@ -53,6 +38,16 @@ public abstract class MecanumAuto extends LinearOpMode {
 
         robot.init(hardwareMap);
 
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+        parameters.vuforiaLicenseKey = "Ab+0cBX/////AAAAGdHqAMTnx0GLk99ODKi2npU8fZTSoYRz3NVvSFAK0EFk6cVF8RTzBiLbhxPYq7ux9X+ATW+W0EXwTqTJYv7a2DyHhScsxg9fzafjr2Ddgdu75ltwpjE/EtNQWfKrSIQJIAespD3AiYczKRK/nQ9txHF9nE9DYht++su01GmV4Hr1KWSwF5H+ZeCTz3Au8NiSGUEPWv6zGmocyTjg00+TcRzAJdf9AFrrZFe1OeiY59egxotwJi7gnYUSfrqL/Mvc79BdDxUENl8FttSNkGxgjtiwjdZBIao7DjYnI21xvIvde98e2i26BOQAuQbn/4eov3Y6G4or0nJUDUIjAzcA0Y6whdiE5qwfd5wdzy9Bkq3J";
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+        vuforia = ClassFactory.createVuforiaLocalizer(parameters);
+
+        VuforiaTrackables relicTrackables = vuforia.loadTrackablesFromAsset("RelicVuMark");
+        relicTemplate = relicTrackables.get(0);
+        relicTemplate.setName("relicVuMarkTemplate");
+
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Ready to run");
         telemetry.update();
@@ -60,7 +55,18 @@ public abstract class MecanumAuto extends LinearOpMode {
         // Wait for the game to start
         waitForStart();
 
-        cryptogramPictures.activate();
+        while(opModeIsActive()){
+
+            Orientation headings = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+            telemetry.addData("Heading", headings.firstAngle);
+            telemetry.addData("Units", headings.angleUnit);
+
+            telemetry.update();
+
+        }
+
+        relicTrackables.activate();
 
         countVisibleImages();
 
@@ -104,34 +110,78 @@ public abstract class MecanumAuto extends LinearOpMode {
 
             }
 
-        }
+            robot.setPower(motorPower);
+            sleepWhileCountingImages(200);
+            robot.setPower(0f);
+            sleepWhileCountingImages(100);
 
-        robot.setPower(motorPower);
-        sleepWhileCountingImages(200);
-        robot.setPower(0f);
-        sleepWhileCountingImages(100);
+            if(motorPower < 0){
 
-        if(motorPower < 0){
+                robot.setPower(0.5f);
+                sleepWhileCountingImages(400);
+                robot.setPower(0f);
 
+            }
+
+            int visibleImage = calculateVisibleImage();
+            resetNumTimesPicSeen();
+
+            telemetry.addData("Visible image (1=left, 2=r, 3=c)", visibleImage);
+            telemetry.update();
+
+            int time = 0;
+
+            switch (visibleImage){
+
+                case 1:
+                    time = 1000;
+                    break;
+
+                case 2:
+                    time = 1500;
+                    break;
+
+                case 3:
+                    time = 2000;
+                    break;
+
+            }
+
+            motorPower = 0.5f;
+            robot.setPower(motorPower);
+            sleep(time);
+            robot.setPower(0);
+
+            Orientation headings = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            float startingAngle = headings.firstAngle;
+
+            float turnPower = 0.4f;
+
+            robot.frontLeft.setPower(turnPower);
+            robot.backLeft.setPower(turnPower);
+            robot.frontRight.setPower(-turnPower);
+            robot.backRight.setPower(-turnPower);
+
+            while(Math.abs(robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - startingAngle) < 90){}
+
+            robot.setPower(0);
+
+            sleep(100);
             robot.setPower(0.5f);
-            sleepWhileCountingImages(400);
+            sleep(250);
             robot.setPower(0f);
 
         }
-
-        int visibleImage = calculateVisibleImage();
-        resetNumTimesPicSeen();
-
-        telemetry.addData("Visible image (1=left, 2=r, 3=c)", visibleImage);
-        telemetry.update();
 
     }
 
     private void countVisibleImages(){
 
-        numTimesPicsSeen[0] += (((VuforiaTrackableDefaultListener) leftPicture.getListener()).isVisible() ? 1 : 0);
-        numTimesPicsSeen[1] += (((VuforiaTrackableDefaultListener) rightPicture.getListener()).isVisible() ? 1 : 0);
-        numTimesPicsSeen[2] += (((VuforiaTrackableDefaultListener) leftPicture.getListener()).isVisible() ? 1 : 0);
+        RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
+
+        numTimesPicsSeen[0] += (vuMark.equals(RelicRecoveryVuMark.LEFT) ? 1 : 0);
+        numTimesPicsSeen[1] += (vuMark.equals(RelicRecoveryVuMark.RIGHT) ? 1 : 0);
+        numTimesPicsSeen[2] += (vuMark.equals(RelicRecoveryVuMark.CENTER) ? 1 : 0);
 
     }
 

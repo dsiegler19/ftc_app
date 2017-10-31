@@ -1,15 +1,17 @@
 package edu.usrobotics.opmode.mecanumbot;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 /**
  * Created by dsiegler19 on 10/9/17.
  */
 
+@Disabled
 @Autonomous(name="MecanumBot Red", group="MecanumBot")
-public class MecanumTeleRed extends MecanumAuto {
+public class MecanumAutoRed extends MecanumAuto {
 
-    public MecanumTeleRed(){
+    public MecanumAutoRed(){
 
         super(false);
 

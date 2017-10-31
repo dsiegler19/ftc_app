@@ -32,11 +32,13 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package edu.usrobotics.opmode.tilerunner;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import edu.usrobotics.opmode.tilerunner.TileRunnerHardware;
 
+@Disabled
 @TeleOp(name="TileRunner Teleop", group="Tilerunner")
 public class TileRunnerTele extends OpMode {
 

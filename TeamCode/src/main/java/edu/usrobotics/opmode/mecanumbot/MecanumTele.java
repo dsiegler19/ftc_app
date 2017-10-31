@@ -1,5 +1,7 @@
 package edu.usrobotics.opmode.mecanumbot;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
@@ -10,8 +12,9 @@ import edu.usrobotics.opmode.StateBasedOp;
 /**
  * Created by dsiegler19 on 10/13/16.
  */
+@Disabled
 @TeleOp(name="Mecanum TeleOp", group="MecanumBot")
-public class MecanumTele extends StateBasedOp {
+public class MecanumTele extends OpMode {
 
     MecanumBotHardware robot = new MecanumBotHardware();
 
@@ -32,8 +35,6 @@ public class MecanumTele extends StateBasedOp {
 
     @Override
     public void init () {
-
-        super.init();
 
         robot.init(hardwareMap);
 

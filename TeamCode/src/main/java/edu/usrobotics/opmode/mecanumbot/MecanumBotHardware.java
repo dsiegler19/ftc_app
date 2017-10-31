@@ -1,19 +1,25 @@
 package edu.usrobotics.opmode.mecanumbot;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 
-import edu.usrobotics.opmode.BaseHardware;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 
 /**
  * Created by mborsch19 & dsiegler19 on 10/13/16.
  */
-public class MecanumBotHardware extends BaseHardware {
+public class MecanumBotHardware {
+
+    public HardwareMap hardwareMap;
 
     public DcMotor frontRight;
     public DcMotor frontLeft;
@@ -31,6 +37,8 @@ public class MecanumBotHardware extends BaseHardware {
 
     public DigitalChannel topLimitSwitch;
     public DigitalChannel bottomLimitSwitch;
+
+    public BNO055IMU imu;
 
     public boolean frCorrectDirection = true;
     public boolean flCorrectDirection = false;
@@ -56,7 +64,14 @@ public class MecanumBotHardware extends BaseHardware {
         TURN_LEFT
     }
 
-    @Override
+    public void init(HardwareMap hm){
+
+        hardwareMap = hm;
+
+        getDevices();
+
+    }
+
     public void getDevices() {
 
         frontRight = hardwareMap.dcMotor.get ("fr");
@@ -81,6 +96,18 @@ public class MecanumBotHardware extends BaseHardware {
 
         topLimitSwitch.setMode(DigitalChannel.Mode.INPUT);
         bottomLimitSwitch.setMode(DigitalChannel.Mode.INPUT);
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+
+        imu.startAccelerationIntegration(new Position(), new Velocity(), 10);
 
         bringUpBallKnocker();
 
